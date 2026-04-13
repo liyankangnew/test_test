@@ -19,11 +19,11 @@ jobs:
     steps:
       # 第一步：下载你的代码到服务器
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # 第二步：设置 Python 环境
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9' # 使用 Python 3.9 版本
 
