@@ -1,1 +1,46 @@
+name: Auto Update Valuation
 
+# 1. 触发条件：定时任务
+on:
+  schedule:
+    # 这里的 22 代表 UTC 时间的 22:00 (即北京时间 06:00)
+    # 这里的 10 代表 UTC 时间的 10:00 (即北京时间 18:00)
+    - cron: '0 22 * * *'
+    - cron: '0 10 * * *'
+  
+  # 允许手动点击按钮运行（方便调试）
+  workflow_dispatch:
+
+# 2. 任务定义
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest # 使用最新的 Ubuntu 服务器环境
+    
+    steps:
+      # 第一步：下载你的代码到服务器
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 第二步：设置 Python 环境
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9' # 使用 Python 3.9 版本
+
+      # 第三步：安装依赖库
+      # 如果你用了 pandas, yfinance 等库，需要在这里安装
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas yfinance matplotlib akshare json
+
+      # 第四步：运行你的 Python 脚本
+      - name: Run Script
+        run: python update_valuation.py
+
+      # 第五步：将生成的 index.html 发布到 GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages # 部署到 gh-pages 分支
+          folder: .        # 部署当前目录下的文件（包含生成的 index.html）
